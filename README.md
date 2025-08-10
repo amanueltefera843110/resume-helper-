@@ -18,6 +18,12 @@ A beautiful, modern, and responsive website where users can upload and manage th
 - **Size Limit**: Maximum file size of 10MB per file
 - **AI Analysis**: Google Gemini AI analyzes your resume and provides detailed feedback
 
+### 🚀 **AI-Powered Resume Improvement**
+- **Smart Feedback**: Get comprehensive analysis and actionable suggestions
+- **Auto-Generation**: Generate improved resume versions based on AI feedback
+- **Professional Enhancement**: AI rewrites your resume with better wording and structure
+- **ATS Optimization**: Improved formatting and keywords for Applicant Tracking Systems
+
 ### 🔒 **File Management**
 - **Upload Progress**: Real-time progress bar during uploads
 - **File List**: View all uploaded resumes with file details
@@ -49,6 +55,13 @@ A beautiful, modern, and responsive website where users can upload and manage th
 3. Start the backend: `python backend.py`
 4. Open `index.html` in your browser
 5. Upload resumes to get AI-powered feedback!
+6. Use the feedback to generate improved resume versions!
+
+### **Workflow**
+1. **Upload Resume**: Upload your resume file (PDF, DOC, DOCX, or TXT)
+2. **Get AI Analysis**: Receive comprehensive feedback and suggestions
+3. **Generate Improved Version**: Use the feedback to create an enhanced resume
+4. **Download & Use**: Copy or download your improved resume
 
 ### **Option 2: Frontend Only**
 1. Download all files to a folder
@@ -121,6 +134,12 @@ const allowedTypes = [
 - **Icons**: Font Awesome for better visual appeal
 - **Typography**: Inter font family from Google Fonts
 
+### **API Endpoints**
+- **POST /upload-resume**: Upload and analyze a resume with AI feedback
+- **POST /generate-improved-resume**: Generate improved resume based on feedback
+- **GET /health**: Check server health status
+- **GET /supported-formats**: Get supported file formats and size limits
+
 ### **Browser Support**
 - Chrome (latest)
 - Firefox (latest)
@@ -171,6 +190,11 @@ Potential features for future versions:
 - Multiple AI model support
 - Resume comparison tools
 - Industry-specific feedback
+- **Resume versioning and history** ✅ (Implemented)
+- **AI-powered resume rewriting** ✅ (Implemented)
+- **Multiple improvement iterations**
+- **Industry-specific templates**
+- **Resume scoring and ranking**
 
 ## 📞 **Support**
 

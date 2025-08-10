@@ -19,6 +19,7 @@
             <nav class="nav">
                 <a href="#home" class="nav-link active">Home</a>
                 <a href="#upload" class="nav-link">Upload</a>
+                <a href="#improve" class="nav-link">Improve</a>
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </nav>
@@ -72,6 +73,56 @@
                 </div>
 
                 <div class="uploaded-files" id="uploadedFiles"></div>
+            </div>
+        </section>
+
+        <!-- Generate Improved Resume Section -->
+        <section id="improve" class="improve-section">
+            <div class="improve-container">
+                <h2 class="section-title">Generate Improved Resume</h2>
+                <p class="section-subtitle">Upload your resume and paste the AI feedback to get an improved version</p>
+                
+                <div class="improve-form">
+                    <div class="file-upload-area">
+                        <label for="improveFileInput" class="file-input-label">
+                            <i class="fas fa-file-upload"></i>
+                            Choose Resume File
+                            <input type="file" id="improveFileInput" accept=".pdf,.doc,.docx,.txt">
+                        </label>
+                    </div>
+                    
+                    <div class="feedback-input-area">
+                        <label for="feedbackInput">Paste AI Feedback Here:</label>
+                        <textarea id="feedbackInput" placeholder="Paste the AI feedback you received from the resume analysis..." rows="6"></textarea>
+                    </div>
+                    
+                    <button id="generateImprovedBtn" class="generate-button" disabled>
+                        <i class="fas fa-magic"></i>
+                        Generate Improved Resume
+                    </button>
+                </div>
+
+                <div class="improve-progress" id="improveProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="improveProgressFill"></div>
+                    </div>
+                    <p class="progress-text">Generating improved resume... <span id="improveProgressPercent">0%</span></p>
+                </div>
+
+                <div class="improved-resume-result" id="improvedResumeResult" style="display: none;">
+                    <h3>Your Improved Resume</h3>
+                    <div class="resume-content" id="resumeContent"></div>
+                    <div class="resume-actions">
+                        <button id="copyResumeBtn" class="action-button">
+                            <i class="fas fa-copy"></i>
+                            Copy to Clipboard
+                        </button>
+                        <button id="downloadResumeBtn" class="action-button">
+                            <i class="fas fa-download"></i>
+                            Download as TXT
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
 

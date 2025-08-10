@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from google import genai
 import pathlib
@@ -19,13 +19,26 @@ CORS(app)
 # Get API key from environment variable for security
 api_key = os.getenv('GOOGLE_API_KEY')
 if not api_key:
-    print("Warning: GOOGLE_API_KEY environment variable not set!")
-    print("Please set your Google Gemini API key:")
-    print("export GOOGLE_API_KEY='your_api_key_here'")
-    print("Or create a .env file with: GOOGLE_API_KEY=your_api_key_here")
+    print("❌ Error: GOOGLE_API_KEY environment variable not set!")
+    print("\n🔑 To get your Google Gemini API key:")
+    print("1. Go to: https://makersuite.google.com/app/apikey")
+    print("2. Sign in with your Google account")
+    print("3. Click 'Create API Key'")
+    print("4. Copy the generated API key")
+    print("\n💡 Then set it in your terminal:")
+    print("export GOOGLE_API_KEY='your_actual_api_key_here'")
+    print("\n🔄 Or create a .env file in this directory with:")
+    print("GOOGLE_API_KEY=your_actual_api_key_here")
+    print("\n❌ Cannot start without a valid API key!")
     exit(1)
 
-client = genai.Client(api_key=api_key)
+try:
+    client = genai.Client(api_key=api_key)
+    print(f"✅ Google Gemini API connected successfully!")
+except Exception as e:
+    print(f"❌ Error connecting to Google Gemini API: {e}")
+    print("Please check your API key and try again.")
+    exit(1)
 
 # Initialize Gemini client
 # client = genai.GenerativeModel('gemini-2.0-flash-exp') # This line is no longer needed
@@ -43,6 +56,13 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Serve static files (CSS, JS, images)
+@app.route('/<path:filename>')
+def serve_static(filename):
+    if filename in ['styles.css', 'script.js']:
+        return send_from_directory('.', filename)
+    return send_from_directory('.', filename)
 
 @app.route('/upload-resume', methods=['POST'])
 def upload_resume():
@@ -126,7 +146,116 @@ def analyze_resume_with_gemini(file_path):
         return response.text
         
     except Exception as e:
-        return f"Error analyzing resume with Gemini AI: {str(e)}"
+        error_msg = str(e)
+        if "API key not valid" in error_msg or "INVALID_ARGUMENT" in error_msg:
+            return f"❌ API Key Error: Your Google Gemini API key is invalid or expired. Please check your API key and try again."
+        elif "quota" in error_msg.lower() or "limit" in error_msg.lower():
+            return f"❌ Quota Error: You've reached your API usage limit. Please check your Google Gemini quota."
+        elif "file" in error_msg.lower():
+            return f"❌ File Error: There was an issue processing your file. Please try a different file format."
+        else:
+            return f"❌ Error analyzing resume: {error_msg}"
+
+@app.route('/generate-improved-resume', methods=['POST'])
+def generate_improved_resume():
+    try:
+        # Check if file is present
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+        
+        file = request.files['file']
+        
+        # Check if file is selected
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        # Check file type
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'File type not allowed'}), 400
+        
+        # Get feedback from request
+        feedback = request.form.get('feedback', '')
+        if not feedback:
+            return jsonify({'error': 'No feedback provided'}), 400
+        
+        # Secure filename and save file
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        try:
+            # Generate improved resume with Gemini AI
+            improved_resume = generate_improved_resume_with_gemini(file_path, feedback)
+            
+            # Clean up uploaded file
+            os.remove(file_path)
+            
+            return jsonify({
+                'success': True,
+                'filename': filename,
+                'improved_resume': improved_resume
+            })
+            
+        except Exception as e:
+            # Clean up file on error
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            raise e
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def generate_improved_resume_with_gemini(file_path, feedback):
+    """Generate an improved resume using Google Gemini AI based on feedback"""
+    try:
+        # Convert file path to pathlib.Path
+        file_path_obj = pathlib.Path(file_path)
+        
+        # Upload file to Gemini
+        sample_file = client.files.upload(file=file_path_obj)
+        
+        # Create comprehensive prompt for resume improvement
+        prompt = f"""
+        Based on the following feedback, please generate an improved version of this resume:
+
+        FEEDBACK:
+        {feedback}
+
+        INSTRUCTIONS:
+        Please create a completely rewritten, improved version of this resume that addresses all the feedback points. The new resume should:
+
+        1. **Incorporate all feedback suggestions** from the analysis
+        2. **Maintain the same basic structure** but with enhanced content
+        3. **Use strong action verbs** and quantifiable achievements
+        4. **Optimize for ATS systems** with relevant keywords
+        5. **Improve formatting and readability** while maintaining professionalism
+        6. **Enhance the professional summary** to be more compelling
+        7. **Strengthen work experience descriptions** with specific achievements
+        8. **Improve skills presentation** and organization
+        9. **Ensure contact information** is complete and professional
+        10. **Make the resume more engaging** and impactful
+
+        Please return the complete improved resume in a clean, professional format that's ready to use. Focus on making it significantly better than the original while maintaining the same level of detail and structure.
+        """
+        
+        # Generate content with Gemini
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-exp",
+            contents=[sample_file, prompt]
+        )
+        
+        return response.text
+        
+    except Exception as e:
+        error_msg = str(e)
+        if "API key not valid" in error_msg or "INVALID_ARGUMENT" in error_msg:
+            return f"❌ API Key Error: Your Google Gemini API key is invalid or expired. Please check your API key and try again."
+        elif "quota" in error_msg.lower() or "limit" in error_msg.lower():
+            return f"❌ Quota Error: You've reached your API usage limit. Please check your Google Gemini quota."
+        elif "file" in error_msg.lower():
+            return f"❌ File Error: There was an issue processing your file. Please try a different file format."
+        else:
+            return f"❌ Error generating improved resume: {error_msg}"
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -134,11 +263,16 @@ def health_check():
 
 @app.route('/', methods=['GET'])
 def root():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/api', methods=['GET'])
+def api_info():
     return jsonify({
         'message': 'Welcome to ResumeHub API',
         'description': 'AI-powered resume analysis using Google Gemini',
         'endpoints': {
             'POST /upload-resume': 'Upload and analyze a resume',
+            'POST /generate-improved-resume': 'Generate improved resume based on feedback',
             'GET /health': 'Check server health',
             'GET /supported-formats': 'Get supported file formats'
         },

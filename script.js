@@ -750,4 +750,135 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(el);
     });
+    
+    // Initialize improve resume functionality
+    initializeImproveResume();
 });
+
+// Improve Resume Functionality
+function initializeImproveResume() {
+    const improveFileInput = document.getElementById('improveFileInput');
+    const feedbackInput = document.getElementById('feedbackInput');
+    const generateBtn = document.getElementById('generateImprovedBtn');
+    const improveProgress = document.getElementById('improveProgress');
+    const improveProgressFill = document.getElementById('improveProgressFill');
+    const improveProgressPercent = document.getElementById('improveProgressPercent');
+    const improvedResumeResult = document.getElementById('improvedResumeResult');
+    const resumeContent = document.getElementById('resumeContent');
+    const copyResumeBtn = document.getElementById('copyResumeBtn');
+    const downloadResumeBtn = document.getElementById('downloadResumeBtn');
+
+    // Enable/disable generate button based on inputs
+    function updateGenerateButton() {
+        const hasFile = improveFileInput.files.length > 0;
+        const hasFeedback = feedbackInput.value.trim().length > 0;
+        generateBtn.disabled = !(hasFile && hasFeedback);
+    }
+
+    // Event listeners
+    improveFileInput.addEventListener('change', updateGenerateButton);
+    feedbackInput.addEventListener('input', updateGenerateButton);
+
+    generateBtn.addEventListener('click', handleGenerateImprovedResume);
+    copyResumeBtn.addEventListener('click', copyResumeToClipboard);
+    downloadResumeBtn.addEventListener('click', downloadResumeAsText);
+
+    function handleGenerateImprovedResume() {
+        const file = improveFileInput.files[0];
+        const feedback = feedbackInput.value.trim();
+
+        if (!file || !feedback) {
+            showNotification('Please select a file and provide feedback', 'error');
+            return;
+        }
+
+        // Show progress
+        improveProgress.style.display = 'block';
+        improvedResumeResult.style.display = 'none';
+        generateBtn.disabled = true;
+
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            updateImproveProgress(progress);
+        }, 200);
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('feedback', feedback);
+
+        // Send request to backend
+        fetch('/generate-improved-resume', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            updateImproveProgress(100);
+            
+            setTimeout(() => {
+                if (data.success) {
+                    showImprovedResume(data.improved_resume);
+                    showNotification('Improved resume generated successfully!', 'success');
+                } else {
+                    showNotification(data.error || 'Failed to generate improved resume', 'error');
+                }
+                hideImproveProgress();
+                generateBtn.disabled = false;
+            }, 500);
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            hideImproveProgress();
+            generateBtn.disabled = false;
+            showNotification('Error generating improved resume: ' + error.message, 'error');
+        });
+    }
+
+    function updateImproveProgress(percent) {
+        improveProgressFill.style.width = percent + '%';
+        improveProgressPercent.textContent = Math.round(percent) + '%';
+    }
+
+    function hideImproveProgress() {
+        improveProgress.style.display = 'none';
+    }
+
+    function showImprovedResume(resumeText) {
+        resumeContent.textContent = resumeText;
+        improvedResumeResult.style.display = 'block';
+        
+        // Scroll to result
+        improvedResumeResult.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }
+
+    function copyResumeToClipboard() {
+        const text = resumeContent.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('Resume copied to clipboard!', 'success');
+        }).catch(() => {
+            showNotification('Failed to copy to clipboard', 'error');
+        });
+    }
+
+    function downloadResumeAsText() {
+        const text = resumeContent.textContent;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'improved_resume.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showNotification('Resume downloaded successfully!', 'success');
+    }
+}
