@@ -31,9 +31,9 @@ if not api_key:
     print("GOOGLE_API_KEY=your_actual_api_key_here")
     print("\n❌ Cannot start without a valid API key!")
     exit(1)
-
+ 
 try:
-client = genai.Client(api_key=api_key)
+    client = genai.Client(api_key=api_key)
     print(f"✅ Google Gemini API connected successfully!")
 except Exception as e:
     print(f"❌ Error connecting to Google Gemini API: {e}")
