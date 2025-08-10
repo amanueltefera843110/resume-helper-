@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Upload - Professional Resume Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-file-alt"></i>
+                <span>ResumeHub</span>
+            </div>
+            <nav class="nav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#upload" class="nav-link">Upload</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">Upload Your Resume with Style</h1>
+                <p class="hero-subtitle">Professional resume management made simple. Upload, organize, and manage your career documents effortlessly.</p>
+                <a href="#upload" class="cta-button">
+                    <i class="fas fa-upload"></i>
+                    Get Started
+                </a>
+            </div>
+            <div class="hero-image">
+                <div class="floating-card">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Resume.pdf</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-file-word"></i>
+                    <span>CV.docx</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section id="upload" class="upload-section">
+            <div class="upload-container">
+                <h2 class="section-title">Upload Your Resume</h2>
+                <p class="section-subtitle">Supported formats: PDF, DOC, DOCX, TXT (Max 10MB)</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Drag & Drop your resume here</h3>
+                        <p>or</p>
+                        <label for="fileInput" class="file-input-label">
+                            Choose File
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" multiple>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">Uploading... <span id="progressPercent">0%</span></p>
+                </div>
+
+                <div class="uploaded-files" id="uploadedFiles"></div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <h2 class="section-title">Why Choose ResumeHub?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Storage</h3>
+                    <p>Your documents are encrypted and stored securely in the cloud with enterprise-grade security.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access and manage your resumes from any device, anywhere, anytime.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Smart Search</h3>
+                    <p>Find your documents quickly with intelligent search and tagging capabilities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3>Auto Sync</h3>
+                    <p>Your files automatically sync across all your devices in real-time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <h2 class="section-title">Get in Touch</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>support@resumehub.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+1 (555) 123-4567</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>123 Business St, Tech City, TC 12345</span>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea placeholder="Your Message" rows="4" required></textarea>
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ResumeHub</h3>
+                    <p>Professional resume management for the modern workforce.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#home">Home</a>
+                    <a href="#upload">Upload</a>
+                    <a href="#features">Features</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ResumeHub. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
