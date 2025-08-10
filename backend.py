@@ -33,7 +33,7 @@ if not api_key:
     exit(1)
 
 try:
-    client = genai.Client(api_key=api_key)
+client = genai.Client(api_key=api_key)
     print(f"✅ Google Gemini API connected successfully!")
 except Exception as e:
     print(f"❌ Error connecting to Google Gemini API: {e}")
@@ -288,4 +288,7 @@ def get_supported_formats():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # Use PORT from environment if provided (Railway/Heroku style), fallback to 5001
+    port = int(os.environ.get('PORT', 5001))
+    debug_env = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(debug=debug_env, host='0.0.0.0', port=port)
