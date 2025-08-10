@@ -66,6 +66,16 @@ def styles():
 def script():
     return send_from_directory('.', 'script.js')
 
+@app.route('/favicon.svg')
+def favicon_svg():
+    return send_from_directory('.', 'favicon.svg')
+
+@app.route('/favicon.ico')
+def favicon_ico():
+    # If no .ico, serve svg as fallback; browsers that require .ico will still request this path
+    # You can replace with a real .ico later if desired
+    return send_from_directory('.', 'favicon.svg')
+
 @app.route('/upload-resume', methods=['POST'])
 def upload_resume():
     try:
