@@ -121,8 +121,8 @@ function uploadFile(file) {
     uploadProgress.style.display = 'block';
     progressText.textContent = 'Uploading file...';
     
-    // Upload file to backend
-    fetch('http://localhost:5001/upload-resume', {
+    // Upload file to backend (use relative path so it works on Railway and locally)
+    fetch('/upload-resume', {
         method: 'POST',
         body: formData
     })

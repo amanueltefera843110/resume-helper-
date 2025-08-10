@@ -57,12 +57,14 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Serve static files (CSS, JS, images)
-@app.route('/<path:filename>')
-def serve_static(filename):
-    if filename in ['styles.css', 'script.js']:
-        return send_from_directory('.', filename)
-    return send_from_directory('.', filename)
+# Serve static files (CSS, JS, images) explicitly
+@app.route('/styles.css')
+def styles():
+    return send_from_directory('.', 'styles.css')
+
+@app.route('/script.js')
+def script():
+    return send_from_directory('.', 'script.js')
 
 @app.route('/upload-resume', methods=['POST'])
 def upload_resume():
