@@ -12,6 +12,7 @@ let uploadedFilesList = [];
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
+    setupPaywall();
     updateActiveNavLink();
 });
 
@@ -50,6 +51,40 @@ function initializeEventListeners() {
     
     // Scroll event for header
     window.addEventListener('scroll', handleScroll);
+}
+
+// Simple paywall: require Stripe checkout before enabling rewrite
+function setupPaywall() {
+    const btn = document.getElementById('generateImprovedBtn');
+    if (!btn) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const paid = urlParams.get('payment') === 'success';
+    if (paid) {
+        btn.removeAttribute('data-paywall');
+        btn.disabled = false;
+        return;
+    }
+    btn.addEventListener('click', async (e) => {
+        if (btn.getAttribute('data-paywall') === 'true') {
+            e.preventDefault();
+            try {
+                const mode = 'payment';
+                const res = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert(data.error || 'Payment not configured');
+                }
+            } catch (err) {
+                alert('Failed to start checkout');
+            }
+        }
+    }, { once: true });
 }
 
 // Handle file selection from input
