@@ -8,7 +8,6 @@ import base64
 import json
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
-import stripe
 
 # Load environment variables from .env file
 load_dotenv()
@@ -40,11 +39,6 @@ except Exception as e:
     print(f"❌ Error connecting to Google Gemini API: {e}")
     print("Please check your API key and try again.")
     exit(1)
-
-# Stripe config
-stripe.api_key = os.getenv('STRIPE_SECRET_KEY', '')
-STRIPE_PRICE_ONE_TIME = os.getenv('STRIPE_PRICE_ONE_TIME', '')
-STRIPE_PRICE_SUBSCRIPTION = os.getenv('STRIPE_PRICE_SUBSCRIPTION', '')
 
 # Initialize Gemini client
 # client = genai.GenerativeModel('gemini-2.0-flash-exp') # This line is no longer needed
@@ -304,31 +298,6 @@ def get_supported_formats():
         'formats': list(ALLOWED_EXTENSIONS),
         'max_size_mb': MAX_FILE_SIZE // (1024 * 1024)
     })
-
-# Create a Stripe Checkout Session
-@app.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-    try:
-        data = request.get_json(silent=True) or {}
-        mode = data.get('mode', 'payment')  # 'payment' or 'subscription'
-        price = STRIPE_PRICE_ONE_TIME if mode == 'payment' else STRIPE_PRICE_SUBSCRIPTION
-        if not stripe.api_key or not price:
-            return jsonify({'error': 'Payment not configured'}), 400
-
-        domain = request.headers.get('Origin') or request.host_url.rstrip('/')
-        success_url = f"{domain}/?payment=success"
-        cancel_url = f"{domain}/?payment=cancel"
-
-        session = stripe.checkout.Session.create(
-            mode=mode,
-            line_items=[{'price': price, 'quantity': 1}],
-            success_url=success_url,
-            cancel_url=cancel_url,
-            automatic_tax={'enabled': True}
-        )
-        return jsonify({'id': session.id, 'url': session.url})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     # Use PORT from environment if provided (Railway/Heroku style), fallback to 5001
